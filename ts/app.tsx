@@ -2,8 +2,21 @@ import * as React from 'react';
 import ReactHelmet from 'react-helmet';
 import styled from 'styled-components';
 
+const Button = styled.button`
+  background-color: ${(props) => props.theme === 'dark' ? '#444' : '#EEE'};
+  color: ${(props) => props.theme === 'dark' ? '#FFF' : '#000'};
+  border: none;
+  border-radius: 15px;
+  padding: 2%;
+  font-family: 'Abel', sans-serif;
+  cursor: pointer;
+  :hover {
+    background-color: ${(props) => props.theme === 'dark' ? '#222' : '#FFF'};
+  }
+`;
+
 const ParentDiv = styled.div`
-  font-size: 2em;
+  font-size: 1.5em;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,7 +91,7 @@ const App = (): JSX.Element => {
         <p>{'Eveytime something positive is said, press Backspace.'}</p>
         <Number>{`${events}`}</Number>
         <p>{`...negative events.`}</p>
-        <button onClick={toggleTheme}>{'Change theme'}</button>
+        <Button theme={theme} onClick={toggleTheme}>{'Change theme'}</Button>
       </ContainerDiv>
     </ParentDiv>
   );
