@@ -1,6 +1,5 @@
 html {
   height: 100vh;
-  margin: 0;
 }
 
 body {
@@ -10,4 +9,5 @@ body {
 
 #root {
   height: 100vh;
+  margin: 0;
 }
