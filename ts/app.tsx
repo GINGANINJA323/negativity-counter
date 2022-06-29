@@ -10,9 +10,16 @@ const Button = styled.button`
   padding: 2%;
   font-family: 'Abel', sans-serif;
   cursor: pointer;
+  width: 40%;
   :hover {
     background-color: ${(props) => props.theme === 'dark' ? '#222' : '#FFF'};
   }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 `;
 
 const ParentDiv = styled.div`
@@ -26,7 +33,7 @@ const ParentDiv = styled.div`
 `;
 
 const Number = styled.p`
-  font-size: 3em;
+  font-size: 32px;
 `;
 
 const ContainerDiv = styled.div`
@@ -41,23 +48,45 @@ const ContainerDiv = styled.div`
   color: ${(props) => props.theme === 'dark' ? '#FFF' : '#000'};
 `;
 
+const RowDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
+const NumberContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+`;
+
 const App = (): JSX.Element => {
-  const [events, setEvents] = React.useState<number>(0);
-  const [theme, setTheme] = React.useState<string>('light');
+  const initialEvents = localStorage.getItem('events') || '0';
+  const initialPosEvents = localStorage.getItem('posEvents') || '0';
+  const initialTheme = localStorage.getItem('theme') || 'light'
+  const [events, setEvents] = React.useState<number>(parseInt(initialEvents));
+  const [posEvents, setPosEvents] = React.useState(parseInt(initialPosEvents));
+  const [theme, setTheme] = React.useState<string>(initialTheme);
 
   const incrementEvent = (e: KeyboardEvent): void => {
     if (e.code === 'Enter') {
-      setEvents(events+1);
+      setPosEvents(posEvents+1);
+      localStorage.setItem('posEvents', `${posEvents+1}`);
     } else if (e.code === 'Backspace') {
-      if (events === 0) {
-        return;
-      }
-      setEvents(events-1);
+      setEvents(events+1);
+      localStorage.setItem('events', `${events+1}`);
     }
   };
 
   const saveTheme = (theme: string): void => {
     localStorage.setItem('theme', theme);
+  }
+
+  const clearEvents = () => {
+    setPosEvents(0);
+    setEvents(0);
+    localStorage.setItem('posEvents', '0');
+    localStorage.setItem('events', '0');
   }
 
   const toggleTheme = () => {
@@ -72,14 +101,6 @@ const App = (): JSX.Element => {
     return () => document.removeEventListener('keydown', incrementEvent);
   });
 
-  React.useEffect(() => {
-    if (localStorage.getItem('theme') && localStorage.getItem('theme') !== null) {
-      setTheme(localStorage.getItem('theme') || 'light');
-    } else {
-      saveTheme('light')
-    }
-  })
-
   return (
     <ParentDiv theme={theme}>
       <ContainerDiv theme={theme}>
@@ -89,9 +110,20 @@ const App = (): JSX.Element => {
         <h1>{'React Negativity Counter'}</h1>
         <p>{'Everytime something negative is said, press Enter.'}</p>
         <p>{'Eveytime something positive is said, press Backspace.'}</p>
-        <Number>{`${events}`}</Number>
-        <p>{`...negative events.`}</p>
-        <Button theme={theme} onClick={toggleTheme}>{'Change theme'}</Button>
+        <RowDiv>
+          <NumberContainer>
+            <Number>{`${events}`}</Number>
+            <p>{`...negative events.`}</p>
+          </NumberContainer>
+          <NumberContainer>
+            <Number>{`${posEvents}`}</Number>
+            <p>{`...positive events.`}</p>
+          </NumberContainer>
+        </RowDiv>
+        <ButtonContainer>
+          <Button theme={theme} onClick={clearEvents}>{'Reset'}</Button>
+          <Button theme={theme} onClick={toggleTheme}>{'Change theme'}</Button>
+        </ButtonContainer>
       </ContainerDiv>
     </ParentDiv>
   );
