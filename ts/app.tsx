@@ -2,6 +2,10 @@ import * as React from 'react';
 import ReactHelmet from 'react-helmet';
 import styled from 'styled-components';
 
+interface TabButtonProps {
+  selected: boolean;
+}
+
 const Button = styled.button`
   background-color: ${(props) => props.theme === 'dark' ? '#444' : '#EEE'};
   color: ${(props) => props.theme === 'dark' ? '#FFF' : '#000'};
@@ -14,6 +18,10 @@ const Button = styled.button`
   :hover {
     background-color: ${(props) => props.theme === 'dark' ? '#222' : '#FFF'};
   }
+`;
+
+const Heading = styled.h1`
+  margin-bottom: 0;
 `;
 
 const ButtonContainer = styled.div`
@@ -60,6 +68,25 @@ const NumberContainer = styled.div`
   align-content: center;
 `;
 
+const TabContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+`;
+
+const TabButton = styled(Button)<TabButtonProps>`
+  margin-top: 10px;
+  background-color: ${(props) => props.selected ? '#222' : ''};
+  :first-child {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  :last-child {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+`;
+
 const App = (): JSX.Element => {
   const initialEvents = localStorage.getItem('events') || '0';
   const initialPosEvents = localStorage.getItem('posEvents') || '0';
@@ -67,6 +94,7 @@ const App = (): JSX.Element => {
   const [events, setEvents] = React.useState<number>(parseInt(initialEvents));
   const [posEvents, setPosEvents] = React.useState(parseInt(initialPosEvents));
   const [theme, setTheme] = React.useState<string>(initialTheme);
+  const [tab, setTab] = React.useState<string>('counts');
 
   const incrementEvent = (e: KeyboardEvent): void => {
     if (e.code === 'Enter') {
@@ -107,23 +135,36 @@ const App = (): JSX.Element => {
         <ReactHelmet>
           <title>{`${events} negative events today - React Negativity Counter`}</title>
         </ReactHelmet>
-        <h1>{'React Negativity Counter'}</h1>
-        <p>{'Everytime something negative is said, press Enter.'}</p>
-        <p>{'Eveytime something positive is said, press Backspace.'}</p>
-        <RowDiv>
-          <NumberContainer>
-            <Number>{`${events}`}</Number>
-            <p>{`...negative events.`}</p>
-          </NumberContainer>
-          <NumberContainer>
-            <Number>{`${posEvents}`}</Number>
-            <p>{`...positive events.`}</p>
-          </NumberContainer>
-        </RowDiv>
-        <ButtonContainer>
-          <Button theme={theme} onClick={clearEvents}>{'Reset'}</Button>
-          <Button theme={theme} onClick={toggleTheme}>{'Change theme'}</Button>
-        </ButtonContainer>
+        <Heading>{'React Negativity Counter'}</Heading>
+        <TabContainer>
+          <TabButton selected={tab === 'counts'} theme={theme} onClick={() => setTab('counts')}>{'Counter'}</TabButton>
+          <TabButton selected={tab === 'ratio'} theme={theme} onClick={() => setTab('ratio')}>{'Ratio'}</TabButton>
+        </TabContainer>
+        {
+          tab === 'ratio' ?
+          <>
+            <h2>{'Current P/N ratio:'}</h2>
+            <Number>{`${posEvents / events}`}</Number>
+          </> : 
+          <>
+            <p>{'Everytime something negative is said, press Enter.'}</p>
+            <p>{'Eveytime something positive is said, press Backspace.'}</p>
+            <RowDiv>
+              <NumberContainer>
+                <Number>{`${events}`}</Number>
+                <p>{`...negative events.`}</p>
+              </NumberContainer>
+              <NumberContainer>
+                <Number>{`${posEvents}`}</Number>
+                <p>{`...positive events.`}</p>
+              </NumberContainer>
+            </RowDiv>
+            <ButtonContainer>
+              <Button theme={theme} onClick={clearEvents}>{'Reset'}</Button>
+              <Button theme={theme} onClick={toggleTheme}>{'Change theme'}</Button>
+            </ButtonContainer>
+          </>
+        }
       </ContainerDiv>
     </ParentDiv>
   );
