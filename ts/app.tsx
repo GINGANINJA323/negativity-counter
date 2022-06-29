@@ -148,7 +148,7 @@ const App = (): JSX.Element => {
           </> : 
           <>
             <p>{'Everytime something negative is said, press Enter.'}</p>
-            <p>{'Eveytime something positive is said, press Backspace.'}</p>
+            <p>{'Everytime something positive is said, press Backspace.'}</p>
             <RowDiv>
               <NumberContainer>
                 <Number>{`${events}`}</Number>
